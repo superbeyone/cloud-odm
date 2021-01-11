@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tdt.odm.persist.TaskCordMapper">
+
+    <resultMap id="BasicResultMap" type="com.tdt.odm.pojo.TaskCord">
+        <result column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="name" property="name"/>
+        <result column="status" property="status"/>
+        <result column="province_code" property="provinceCode"/>
+        <result column="count" property="count"/>
+        <result column="operator_name" property="operatorName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="wait_queue" property="waitQueue"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <insert id="addTaskCord" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        insert into tb_task_cord
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id,
+            </if>
+            <if test="status != null and status != ''">
+                status,
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                province_code,
+            </if>
+            <if test="count != null and count != ''">
+                count,
+            </if>
+            <if test="operatorName != null and operatorName != ''">
+                operator_name,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="userId != null and userId != ''">
+                #{userId},
+            </if>
+            <if test="status != null and status != ''">
+                #{status},
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                #{provinceCode},
+            </if>
+            <if test="count != null and count != ''">
+                #{count},
+            </if>
+            <if test="operatorName != null and operatorName != ''">
+                #{operatorName},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="startTime != null">
+                #{startTime},
+            </if>
+            <if test="endTime != null">
+                #{endTime},
+            </if>
+            <if test="remark != null and remark != ''">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateTaskCordName">
+        update tb_task_cord
+        set name = #{name}
+        where id = #{id}
+    </update>
+    <update id="updateRunningTaskCordStatusToHandFailByUserId">
+        update tb_task_cord
+        set status = -2
+        where user_id = #{userId} and status = 1
+    </update>
+    <update id="updateTaskCordOfTaskCountByTaskCordId">
+        update tb_task_cord
+        set count = (select count(1) from tb_task where cord_id = #{id})
+        where id  = #{id}
+    </update>
+    <update id="updateOnReadyTaskCordWaitingQueue">
+        update tb_task_cord
+        set wait_queue = #{taskCord.waitQueue}
+        where id = #{taskCord.id}
+    </update>
+    <update id="updateTaskCordStatus">
+        update tb_task_cord
+        <set>
+            <trim suffixOverrides=",">
+                <if test="taskCord.status != null and taskCord.status != ''">
+                    status = #{taskCord.status},
+                </if>
+                <if test="taskCord.startTime != null">
+                    start_time=#{taskCord.startTime},
+                </if>
+                <if test="taskCord.endTime != null">
+                    end_time=#{taskCord.endTime},
+                </if>
+                <if test="taskCord.operatorName != null and taskCord.operatorName != ''">
+                    operator_name=#{taskCord.operatorName},
+                </if>
+                <if test="taskCord.remark != null and taskCord.remark != ''">
+                    remark=#{taskCord.remark},
+                </if>
+            </trim>
+        </set>
+        where id = #{taskCord.id}
+    </update>
+    <delete id="deleteTaskCordById">
+        delete from tb_task_cord where id = #{id}
+    </delete>
+
+    <select id="getReadyTaskCordCountByUserProvinceCode" resultType="java.lang.Integer" parameterType="string">
+        select count(1) from tb_task_cord
+          where province_code = #{provinceCode} and wait_queue = 0
+    </select>
+    <select id="getAllRunningTaskCordByPage" resultMap="BasicResultMap">
+      select * from tb_task_cord  order by id desc where status = 1 limit #{pageNo},#{pageSize}
+    </select>
+    <select id="getRunningTaskCordByUserProvinceCode" resultMap="BasicResultMap" parameterType="string">
+      select * from tb_task_cord where status = 1 and province_code = #{provinceCode}
+    </select>
+    <select id="getAllTaskCordByPage" resultMap="BasicResultMap">
+        select * from tb_task_cord  order by id desc limit #{pageNo},#{pageSize}
+    </select>
+    <select id="getAllTaskCordCount" resultType="java.lang.Integer">
+        select count(1) from tb_task_cord
+    </select>
+    <select id="getAllRunningTaskCount" resultType="java.lang.Integer">
+        select count(1) from tb_task_cord where status = 1
+    </select>
+    <select id="getReadyTaskCordByUserProvinceCode" resultMap="BasicResultMap">
+        select * from tb_task_cord where status = 0 and province_code = #{provinceCode} and wait_queue = 0
+    </select>
+    <select id="getAllReadyTaskCord" resultMap="BasicResultMap">
+        select * from tb_task_cord where status = 0
+    </select>
+    <select id="getTaskCordListByProvinceCode" resultMap="BasicResultMap">
+        select * from tb_task_cord where province_code = #{provinceCode}
+    </select>
+    <select id="getReadyTaskCordCountByUserId" resultType="java.lang.Integer">
+        select count(1) from tb_task_cord where user_id = #{userId} and status = 0 and wait_queue = 0
+    </select>
+    <select id="getReadyTaskCordByUserId" resultMap="BasicResultMap">
+        select * from tb_task_cord where user_id = #{userId} and status = 0 and wait_queue = 0 order by id desc limit 1
+    </select>
+    <select id="getTaskCordById" resultMap="BasicResultMap">
+        select * from tb_task_cord where id = #{id}
+    </select>
+    <select id="getRunningTaskCordByUserId" resultMap="BasicResultMap">
+        select * from tb_task_cord where status = 1 and user_id = #{userId} order by id desc limit 1
+    </select>
+    <select id="getUserTaskCordByUserIdAndPage" resultMap="BasicResultMap">
+        select * from tb_task_cord  order by id desc where user_id = #{userId} limit #{pageNo},#{pageSize}
+    </select>
+    <select id="getUserTaskCordCountByUserId" resultType="java.lang.Integer">
+        select count(1) from tb_task_cord where user_id = #{userId}
+    </select>
+    <select id="getMaxWaitingQueueOnReadyByUserProvinceCode" resultType="java.lang.Integer">
+        select max(wait_queue) from tb_task_cord where status = 0 and province_code = #{provinceCode}
+    </select>
+    <select id="getTaskCordListOnWaitQueueByUserProvince" resultMap="BasicResultMap">
+        select * from tb_task_cord where status = 0 and wait_queue > 0 and province_code = #{provinceCode} order by wait_queue asc
+    </select>
+    <select id="getLastestTaskCordByUserId" resultMap="BasicResultMap">
+        select * from tb_task_cord where user_id = #{userId} order by id desc limit 1
+    </select>
+    <select id="getSearchResult" resultMap="BasicResultMap">
+        select * from tb_task_cord
+        <where>
+            <trim suffixOverrides="and">
+                <if test="cordName != null and cordName != ''">
+                    <bind name="cordName" value="'%'+cordName+'%'"/>
+                    name like binary #{cordName} and
+                </if>
+                <if test="createTime != null and createTime != ''">
+                    create_time &gt;= #{createTime} and
+                </if>
+                <if test="startTime != null and startTime != ''">
+                    start_time &gt;= #{startTime} and
+                </if>
+                <if test="endTime != null and endTime != ''">
+                    end_time &lt;= #{endTime} and
+                </if>
+                <if test="status != null and status != ''">
+                    <if test="status == -1">
+                        status = -1 or status = -2 and
+                    </if>
+                    <if test="status != -1">
+                        status = #{status} and
+                    </if>
+                </if>
+                <if test="username != null and username != ''">
+                    <bind name="username" value="'%'+username+'%'"/>
+                    operator_name like binary #{username} and
+                </if>
+                <if test="provinceCode != null and provinceCode != ''">
+                    province_code = #{provinceCode} and
+                </if>
+                <if test="userId != null and userId != ''">
+                    user_id = #{userId} and
+                </if>
+            </trim>
+        </where>
+        order by id desc
+    </select>
+    <select id="getWaitingQueueOnReadyByUserProvinceCode" resultMap="BasicResultMap">
+        select * from tb_task_cord where status = 0 and wait_queue > 0
+    </select>
+
+</mapper>

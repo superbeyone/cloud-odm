@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tdt.odm.persist.MongoDBMapper">
+
+    <resultMap id="BasicResultMap" type="com.tdt.odm.pojo.MongoDB">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="alias" property="alias"/>
+        <result column="conn_id" property="connId"/>
+        <result column="type" property="type"/>
+    </resultMap>
+    <insert id="addNewMongoDB">
+        insert into tb_mongo_db
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="alias != null and alias != ''">
+                alias,
+            </if>
+            <if test="connId != null and connId != ''">
+                conn_id,
+            </if>
+            <if test="type != null and type != ''">
+                type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="alias != null and alias != ''">
+                #{alias},
+            </if>
+            <if test="connId != null and connId != ''">
+                #{connId},
+            </if>
+            <if test="type != null and type != ''">
+                #{type},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateMongoDB">
+        update tb_mongo_db
+        <set>
+            <trim suffixOverrides=",">
+
+                <if test="name != null and name != ''">
+                    name = #{name},
+                </if>
+                <if test="alias != null and alias != ''">
+                    alias = #{alias},
+                </if>
+
+                <if test="type != null and type != ''">
+                    type = #{type},
+                </if>
+            </trim>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleteMongoDBByConnId">
+        delete from tb_mongo_db where conn_id = #{connId}
+    </delete>
+
+    <select id="getMongoDBListByConnId" resultMap="BasicResultMap">
+        select * from tb_mongo_db where conn_id =#{id}
+    </select>
+    <select id="getMongoDBListOfUserHasAuthByUserId" resultType="com.tdt.odm.pojo.MongoDBVo">
+        select id dbId,name dbName, alias dbAlias,type from tb_mongo_db where id in (select db_id from tb_user_db where user_id = #{userId})
+    </select>
+    <select id="getMongoDBById" resultMap="BasicResultMap">
+        select * from tb_mongo_db where id = #{id}
+    </select>
+    <select id="getMongoDBByNameAndConnId" resultMap="BasicResultMap">
+        select * from tb_mongo_db where name = #{name} and conn_id = #{connId}
+    </select>
+
+    <delete id="deleteMongoDBById">
+        delete from tb_mongo_db where id = #{id}
+    </delete>
+    <!--tb_user_db-->
+    <delete id="deleteUserDBDataByDBId">
+        delete from tb_user_db where db_id = #{dbId}
+    </delete>
+
+</mapper>

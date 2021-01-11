@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tdt.odm.persist.MongoConnectionMapper">
+    <resultMap id="BasicResultMap" type="com.tdt.odm.pojo.MongoAddr">
+        <result column="id" property="id"/>
+        <result column="conn_name" property="connName"/>
+        <result column="ip" property="ip"/>
+        <result column="port" property="port"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="province_code" property="provinceCode"/>
+        <result column="activate" property="activate"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <insert id="addNewMongoConnectionAddr" parameterType="com.tdt.odm.pojo.MongoAddr">
+        INSERT INTO tb_mongo_conn
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="connName != null and connName != ''">
+                conn_name,
+            </if>
+            <if test="ip != null and ip != ''">
+                ip,
+            </if>
+            <if test="port != null and port != ''">
+                port,
+            </if>
+            <if test="username != null and username != ''">
+                username,
+            </if>
+            <if test="password != null and password != ''">
+                password,
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                province_code,
+            </if>
+            <if test="activate != null and activate != ''">
+                activate,
+            </if>
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="connName != null and connName != ''">
+                #{connName},
+            </if>
+            <if test="ip != null and ip != ''">
+                #{ip},
+            </if>
+            <if test="port != null and port != ''">
+                #{port},
+            </if>
+            <if test="username != null and username != ''">
+                #{username},
+            </if>
+            <if test="password != null and password != ''">
+                #{password},
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                #{provinceCode},
+            </if>
+            <if test="activate != null and activate != ''">
+                #{activate},
+            </if>
+            <if test="remark != null and remark != ''">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateMongoConnectionStatusToActivateById">
+        update tb_mongo_conn
+          set activate = 1
+            where id = #{id}
+    </update>
+    <update id="updateMongoConnectionStatusToNotActivateById">
+        update tb_mongo_conn
+          set activate = 0
+            where id = #{id}
+    </update>
+    <update id="updateMongoConnection">
+        update tb_mongo_conn
+        set
+        <trim suffixOverrides=",">
+            <if test="connName != null and connName != ''">
+                conn_name = #{connName},
+            </if>
+            <if test="ip != null and ip != ''">
+                ip = #{ip},
+            </if>
+            <if test="port != null and port != ''">
+                port = #{port},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                province_code = #{provinceCode},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+    <delete id="deleteMongoConnectionAddrById">
+        delete from tb_mongo_conn where id = #{id}
+    </delete>
+    <select id="getAdminMongoConnectionAddrList" resultMap="BasicResultMap">
+        select id,conn_name,province_code,ip from tb_mongo_conn
+            where province_code = '00' order by activate desc,id asc
+    </select>
+    <select id="getUserMongoConnectionAddrList" resultMap="BasicResultMap">
+        select id,conn_name,province_code,ip from tb_mongo_conn
+            where province_code != '00' order by activate desc,id asc
+    </select>
+    <select id="getActivateMongoConnectionByUserProvinceCode" resultMap="BasicResultMap">
+      select * from tb_mongo_conn
+        where activate = 1 and province_code = #{provinceCode} limit 1
+    </select>
+    <select id="getAllUnActivateMongoConnection" resultMap="BasicResultMap">
+        select id,conn_name,ip,port,username,passord,remark from tb_mongo_conn where activate = 0
+    </select>
+    <select id="getUserMongoConnectionAddrListByProvinceCode" resultMap="BasicResultMap">
+        select * from tb_mongo_conn where province_code = #{provinceCode} order by activate desc,id asc
+    </select>
+    <select id="getMongoConnectionAddrById" resultMap="BasicResultMap">
+        select * from tb_mongo_conn where id = #{id}
+    </select>
+</mapper>

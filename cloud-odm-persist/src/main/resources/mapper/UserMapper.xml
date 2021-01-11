@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tdt.odm.persist.UserMapper">
+    <resultMap id="BasicResultMap" type="com.tdt.odm.pojo.User">
+        <result column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="province_code" property="provinceCode"/>
+        <result column="mobile" property="mobile"/>
+        <result column="email" property="email"/>
+        <result column="role" property="role"/>
+        <result column="nickname" property="nickname"/>
+        <result column="create_time" property="createTime"/>
+        <result column="root_path" property="rootPath"/>
+    </resultMap>
+
+    <insert id="addUser" parameterType="com.tdt.odm.pojo.User">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into tb_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">
+                username,
+            </if>
+            <if test="password != null and password != ''">
+                password,
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                province_code,
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile,
+            </if>
+            <if test="email != null and email != ''">
+                email,
+            </if>
+            <if test="nickname != null and nickname != ''">
+                nickname,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="rootPath != null">
+                root_path,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">
+                #{username},
+            </if>
+            <if test="password != null and password != ''">
+                #{password},
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                #{provinceCode},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                #{mobile},
+            </if>
+            <if test="email != null and email != ''">
+                #{email},
+            </if>
+            <if test="nickname != null and nickname != ''">
+                #{nickname},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="rootPath != null">
+                #{rootPath},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateUserBasicInfo" parameterType="com.tdt.odm.pojo.User">
+        update tb_user
+        <set>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="nickname != null and nickname != ''">
+                nickname = #{nickname},
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                province_code = #{provinceCode},
+            </if>
+            <if test="rootPath != null and rootPath != ''">
+                root_path = #{rootPath},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateUserPwdByUsername" parameterType="string">
+        update tb_user
+        <set>
+            <if test="password != null and password != ''">
+                password = #{password}
+            </if>
+        </set>
+        where username = #{username}
+    </update>
+    <update id="resetUserPasswordByUserId">
+        update tb_user
+        set password = md5('000000')
+         where id = #{id}
+    </update>
+
+    <select id="getUserBasicInfoByUsername" resultMap="BasicResultMap">
+        select id,role,username,password,nickname,province_code,mobile,email,root_path from tb_user where username = #{username}
+    </select>
+    <select id="getUserPasswordByUsername" resultType="java.lang.String">
+        select password from tb_user where username = #{username}
+    </select>
+    <select id="getUserCount" resultType="java.lang.Integer">
+        select count(1) from tb_user
+        <where>
+            <if test="kwd != null and kwd != ''">
+                <bind name="kwd" value="'%'+kwd+'%'"/>
+                username like binary #{kwd} or
+                mobile like binary #{kwd} or
+                email like binary #{kwd} or
+                nickname like binary #{kwd} or
+                create_time like binary #{kwd} or
+                province_code in (SELECT code from tb_division where name like binary #{kwd})
+            </if>
+        </where>
+    </select>
+    <select id="getUserListByPage" resultMap="BasicResultMap">
+        select id,username,role,nickname,create_time,mobile,email,province_code,root_path from tb_user
+        <where>
+            <if test="kwd != null and kwd != ''">
+                <bind name="kwd" value="'%'+kwd+'%'"/>
+                username like binary #{kwd} or
+                mobile like binary #{kwd} or
+                email like binary #{kwd} or
+                nickname like binary #{kwd} or
+                create_time like binary #{kwd} or
+                province_code in (SELECT code from tb_division where name like binary #{kwd})
+            </if>
+        </where>
+        limit #{pageNo},#{pageSize}
+    </select>
+    <select id="getUserListByProvinceCode" resultMap="BasicResultMap">
+        select id,username,nickname,root_path from tb_user where province_code = #{provinceCode}
+    </select>
+    <select id="getUserBasicInfoById" resultMap="BasicResultMap">
+        select id,role,nickname,username,password,province_code,mobile,email,root_path from tb_user where id = #{id}
+    </select>
+    <delete id="deleteUserById">
+        delete from tb_user where id = #{id}
+    </delete>
+
+    <!--tb_user_db-->
+
+    <insert id="addUserOfOperateDBAuthData" parameterType="list">
+
+        insert into tb_user_db
+        (user_id,db_id)
+        values
+        <foreach collection="dbIds" item="dbId" index="index" separator=",">
+            (#{userId}, #{dbId})
+        </foreach>
+    </insert>
+    <delete id="deleteUserOfAllOperateDBAuthDataByUserId">
+        delete from tb_user_db
+        where user_id = #{userId}
+    </delete>
+
+
+</mapper>

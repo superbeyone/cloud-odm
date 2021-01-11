@@ -1,0 +1,17 @@
+server:
+  port: 9201
+
+spring:
+  application:
+    name: cloud-odm-data-check-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.9.104.20:8848
+        
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

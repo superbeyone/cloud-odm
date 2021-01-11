@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: cloud-odm-web-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.tdt.com:80
+        namespace: 6c044ca8-70a8-45c0-85e0-958b783b761e
+      config:
+        server-addr: nacos.tdt.com:80  #配置中心地址
+        file-extension: yaml  #yaml格式配置文件
+        group: DEV_GROUP
+        namespace: 6c044ca8-70a8-45c0-85e0-958b783b761e
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+logging:
+  level:
+    root:
+      debug

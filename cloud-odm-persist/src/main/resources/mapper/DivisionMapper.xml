@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tdt.odm.persist.DivisionMapper">
+
+    <select id="getDivisionList" resultType="com.tdt.odm.pojo.Division">
+        SELECT code,name FROM tb_division
+    </select>
+    <select id="getDivisionByCode" resultType="com.tdt.odm.pojo.Division">
+        select code,name from tb_division where code = #{provinceCode}
+    </select>
+</mapper>

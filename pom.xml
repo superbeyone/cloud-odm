@@ -111,5 +111,26 @@
             </snapshots>
         </repository>
     </repositories>
+    
+    <modules>
+        <module>cloud-odm-commons</module>
+        <module>cloud-odm-utils</module>
+        <module>cloud-odm-data-check</module>
+        <module>cloud-odm-web</module>
+        <module>cloud-odm-config</module>
+        <module>cloud-odm-entity</module>
+        <module>cloud-odm-task</module>
+        <module>cloud-odm-mongo</module>
+        
+        <module>cloud-odm-data-import</module>
+        <module>cloud-odm-data-delete</module>
+        <module>cloud-odm-data-export</module>
+        <module>cloud-odm-data-commons</module>
+        <module>cloud-odm-data-migrate</module>
+        
+        <module>cloud-odm-pojo</module>
+        <module>cloud-odm-persist</module>
+    </modules>
+    
 
 </project>
