@@ -47,6 +47,11 @@
         </dependency>
         <dependency>
             <groupId>com.tdt.cloud</groupId>
+            <artifactId>cloud-odm-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tdt.cloud</groupId>
             <artifactId>cloud-odm-task</artifactId>
             <version>${project.version}</version>
         </dependency>

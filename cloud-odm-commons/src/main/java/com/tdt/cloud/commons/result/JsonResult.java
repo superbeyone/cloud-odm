@@ -45,6 +45,10 @@ public class JsonResult<T> {
         return new JsonResult(200, "操作成功", null);
     }
 
+    public static JsonResult success(String msg) {
+        return new JsonResult(200, msg, null);
+    }
+
     public static JsonResult success(ResultCodeEnum resultCodeEnum) {
         return new JsonResult(resultCodeEnum.getCode(), resultCodeEnum.getMsg(), null);
     }

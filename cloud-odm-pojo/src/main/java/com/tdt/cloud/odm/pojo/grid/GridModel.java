@@ -1,6 +1,7 @@
 package com.tdt.cloud.odm.pojo.grid;
 
-import com.tdt.odm.pojo.data.RangeSpaceModel;
+
+import com.tdt.cloud.odm.pojo.data.RangeSpaceModel;
 
 import java.io.Serializable;
 import java.util.List;
